@@ -159,12 +159,22 @@ class AppControlRuleSets:
         print('\nTurning rules into rule objects...')
 
         for rule in unique_rules:
-            rule_description = rule[0]
-            rule_hash = rule[1]
-
             new_rule = api.ApplicationControlGlobalRule()
-            new_rule.description = rule_description
-            new_rule.sha256 = rule_hash
+
+            # allows for CSV entries
+            if isinstance(rule, list) and len(rule) >= 2:
+                rule_description = rule[0]
+                rule_hash = rule[1]
+                print(f'Rule description: {rule_description}, Rule hash: {rule_hash}')
+
+                new_rule.description = rule_description
+                new_rule.sha256 = rule_hash
+
+            # allows for list of rule numbers
+            else:
+                print(f'Rule hash: {rule}')
+                new_rule.sha256 = rule
+
             new_rules.append(new_rule)
             print('Done')
 
@@ -306,6 +316,24 @@ class AppControlRuleSets:
         pprint(rules)
 
         return rules
+
+    def delete_global_rules(self, rules):
+        global_rules_api = api.GlobalRulesApi(self.api_client)
+
+        for rule in rules:
+            print(f'Deleting rule ID: {rule}')
+
+            try:
+                api_response = global_rules_api.delete_global_rule(rule, self.api_version)
+
+                if api_response:
+                    pprint(api_response)
+
+                else:
+                    print('Done')
+
+            except ApiException as e:
+                self._format_exception(e)
 
 
 def main():
