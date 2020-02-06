@@ -281,8 +281,13 @@ class AppControlRuleSets:
     def _format_exception(e):
         """Convenience method for extracting & returning error messages"""
 
-        msg = json.loads(e.body)['message']
-        print(f'\nError: {msg}')
+        try:
+            msg = json.loads(e.body)['message']
+            print(f'\nError: {msg}')
+
+        except ValueError:
+            print(f'\nError: {e}')
+
         sys.exit(1)
 
     @staticmethod
@@ -337,7 +342,6 @@ class AppControlRuleSets:
 
 
 def main():
-
     ac = AppControlRuleSets()
     existing_rules = ac.get_global_rules()
     existing_rule_hashes = ac.get_existing_rule_hashes(existing_rules)
