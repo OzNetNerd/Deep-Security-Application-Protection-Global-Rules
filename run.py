@@ -52,10 +52,11 @@ class AppControlRuleSets:
         if unique_new_rules:
             print('\nAll new hashes which were found:')
             pprint(unique_new_rules)
+
             return unique_new_rules
 
         else:
-            print('\nNo new hashes found')
+            print('\nNo new hashes found. Exiting the script...')
             sys.exit()
 
     def get_global_rules(self) -> list:
@@ -97,7 +98,12 @@ class AppControlRuleSets:
             global_rules_api = api.GlobalRulesApi(self.api_client)
             api_response = global_rules_api.list_global_rules(self.api_version)
             extracted_rules = api_response.application_control_global_rules
-            pprint(extracted_rules)
+
+            if extracted_rules:
+                pprint(extracted_rules)
+
+            else:
+                print('There are no existing rules')
 
             return extracted_rules
 
@@ -117,9 +123,8 @@ class AppControlRuleSets:
         :param csv_rules:
         :return: list
         """
-
-        print('\nExtracting hashes from existing rules...')
         hashes = []
+        print('\nExtracting hashes from existing rules...')
 
         for entry in csv_rules:
             entry_hash = entry.sha256
@@ -134,6 +139,8 @@ class AppControlRuleSets:
     def create_global_rule_objects(unique_rules) -> list:
         """Creates a list of of ApplicationControlGlobalRules
 
+        Takes a list of CSV entries ([description, hash]) or a list of rule number `int`s ([1,2,3]) and turns them into rule objects
+
         Example:
 
         [{'action': None,
@@ -143,11 +150,12 @@ class AppControlRuleSets:
         'last_updated_administrator': None,
         'sha256': '7F83B1657FF1FC53B92DC18148A1D65DFC2D4B1FA3D677284ADDD200126D9055'}]
 
-        :param unique_rules:
-        :return: <class 'deepsecurity.models.application_control_global_rule.ApplicationControlGlobalRule'>
+        :param unique_rules: List of CSV entries ([description, hash]) or a list of rule number `int`s ([1,2,3])
+        :return: List of <class 'deepsecurity.models.application_control_global_rule.ApplicationControlGlobalRule'>
         """
 
         new_rules = []
+        print('\nTurning rules into rule objects...')
 
         for rule in unique_rules:
             rule_description = rule[0]
@@ -157,6 +165,7 @@ class AppControlRuleSets:
             new_rule.description = rule_description
             new_rule.sha256 = rule_hash
             new_rules.append(new_rule)
+            print('Done')
 
         return new_rules
 
