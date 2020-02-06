@@ -110,7 +110,8 @@ class AppControlRuleSets:
         except ApiException as e:
             self._format_exception(e)
 
-    def get_existing_rule_hashes(self, csv_rules) -> list:
+    @staticmethod
+    def get_existing_rule_hashes(csv_rules) -> list:
         """Extracts hashes from existing rules
 
         Example:
