@@ -170,3 +170,8 @@ Updated Deep Security global rule list:
 
 Process finished with exit code 0
 ```
+
+# Contact
+
+* Blog: oznetnerd.com
+* Email: will@oznetnerd.com
